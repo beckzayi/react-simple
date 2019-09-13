@@ -1,6 +1,5 @@
 import React from './react';
 import ReactDOM from './react-dom';
-import Component from './react/component';
 
 const ele = (
 	<div className='active' title='my title'>
@@ -8,21 +7,56 @@ const ele = (
 	</div>
 );
 
-function Home() {
-	return (
-		<div className="active" title="123">Home Content</div>
-	);
-};
+// function Home() {
+// 	return (
+// 		<div className="active" title="123">Home Content</div>
+// 	);
+// };
 
 const title = 'Welcome';
 
-// class Home extends Component {
-// 	render() {
-// 		return (
-// 			<div>Home Content</div>
-// 		);
-// 	}
-// }
+class Home extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			num: 0
+		};
+	}
+
+	componentWillMount() {
+		console.log('Component Will Mount');
+	}
+
+	componentWillReceiveProps() {
+		console.log('Component Will Receive Props');
+	}
+
+	componentWillUpdate() {
+		console.log('Component Will Update');
+	}
+
+	componentDidUpdate() {
+		console.log('Component Did Update');
+	}
+
+	componentDidMount() {
+		console.log('Component Did Mount');
+	}
+
+	handleClick() {
+
+	}
+
+	render() {
+		return (
+			<div className="active" title="123">
+				Home Content <span>class based</span>
+				<button onClick={this.handleClick.bind(this)}>Change</button>
+				<div>Number: {this.state.num}</div>
+			</div>
+		);
+	}
+}
 
 // console.log(ele);
 

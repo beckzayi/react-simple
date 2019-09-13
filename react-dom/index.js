@@ -16,6 +16,10 @@ function _render(vnode) {
 		vnode = '';
 	}
 
+	if (typeof vnode === 'number') {
+		vnode = String(vnode);
+	}
+
 	if (typeof vnode === 'string') {
 		return (document.createTextNode(vnode));
 	}
@@ -42,9 +46,11 @@ function _render(vnode) {
 		});
 	}
 
-	children.forEach(child => {
-		render(child, newDom); // recursive
-	});
+	if (children) {
+		children.forEach(child => {
+			render(child, newDom); // recursive
+		});
+	}
 
 	return (newDom);
 }
@@ -69,8 +75,19 @@ function createComponent(comp, props) {
 }
 
 function setComponentProps(comp, props) {
+	// base 还未在 renderComponent() 中被挂载
+	if (!comp.base) {
+		if (comp.componentWillMount) {
+			comp.componentWillMount();
+		}
+	} else if (comp.componentWillReceiveProps) {
+		comp.componentWillReceiveProps();
+	}
+
+	// 设置组件的属性
 	comp.props = props;
-	console.log('comp', comp);
+
+	// 渲染组件
 	renderComponent(comp);
 }
 
@@ -78,7 +95,20 @@ function renderComponent(comp) {
 	const renderer = comp.render(); // return a JSX object
 	let base;
 	base = _render(renderer); // return a js node object
-	comp.base = base;
+
+	if (comp.base && comp.componentWillUpdate) {
+		comp.componentWillUpdate();
+	}
+
+	if (comp.base) {
+		if (comp.componentDidUpdate) {
+			comp.componentDidUpdate();
+		}
+	} else if (comp.componentDidMount) {
+		comp.componentDidMount();
+	}
+
+	comp.base = base; // 挂载到base这个属性上
 }
 
 function setAttribute(dom, key, value) {
